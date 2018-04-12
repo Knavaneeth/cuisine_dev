@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Cuisine</title>
+	<link rel="shortcut icon" href="/assets/images/fav.png" type="image/x-icon">
+	<link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
+	<link href="assets/css/bootstrap.min.css" rel="stylesheet">
+	<link href="assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+	<link href="assets/css/font-awesome.min.css" rel="stylesheet">
+	<link href="assets/css/sweetalert2.min.css" rel="stylesheet">
+	<link href="assets/css/app.css" rel="stylesheet">
+	<script src="lib/epos-2.6.0.js"></script>	
+</head>
+
+<body class="order-page">
+	<header>
+		<div class="header">
+				<div class="page-title" > 
+					<span id="merchant-name" ></span>
+				</div>
+			<div class="panel-control-left">
+				<a href="#side_menu" class="toggle-menu">
+					<i class="fa fa-bars fa-lg"></i>
+				</a>
+				<i class="kitchen-printer-text" aria-hidden="true">Kitchen Printer</i>
+				<i class="fa fa-print kitchen-printer-status" aria-hidden="true"></i>
+			</div>
+			<div class="page-title">
+				<h4>Orders List</h4>
+			</div>
+			<div class="panel-control-right dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+					<i class="fa fa-ellipsis-v fa-lg"></i>
+				</a>
+				<ul class="dropdown-menu dropdown-menu-right">
+					<li>
+						<a href="#" onclick="logout();" loader-wrap>Logout</a>
+					</li>
+				</ul>
+			</div>
+			<!-- <div class="panel-control-right"><a href="#" data-toggle="modal" data-target="#search"><i class="fa fa-search fa-lg" aria-hidden="true"></i></a>
+			</div> -->
+			<div class="panel-control-right">
+				<a href="#" data-toggle="modal" data-target="#print">
+					<i class="fa fa-print fa-lg printer-status" aria-hidden="true"></i>
+				</a>
+			</div>
+
+			<div class="panel-control-right">
+				<a href="javascript:void(0);">
+					<img src="assets/images/delivery-sm.png" />
+					<span class="badge del-badge pull-right" id="merchnt_dlvry_time"></span>
+				</a>
+			</div>
+			<div class="panel-control-right">
+				<a href="javascript:void(0);">
+					<img src="assets/images/pickup-sm.png" />
+					<span class="badge del-badge pull-right" id="merchnt_pickup_time"></span>
+				</a>
+			</div>
+		</div>
+	</header>
+	<div class="sidebar-menu" id="side_menu">
+		<div class="sidemenu">
+			<ul>
+				<li>
+					<a href="order-list.html">
+						<i aria-hidden="true" class="fa fa-home"></i> Home</a>
+				</li>
+				<li class="table_booking">
+					<a href="#booking_lists" onclick="getNewBooking();" data-toggle="tab" aria-expanded="false">
+						<i class="fa fa-cutlery" aria-hidden="true"></i> Table Booking</a>
+				</li>
+				<li>
+					<a href="profile.html">
+						<i class="fa fa-user" aria-hidden="true"></i> Profile</a>
+				</li>
+				<li>
+					<a href="#" onclick="logout();">
+						<i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="tab-fixed">
+		<ul class="nav nav-tabs nav-tabs-top nav-justified m-b-0 navbar-fixed-bottom">
+			<li class="active take_away">
+				<a href="#order_list" data-toggle="tab" aria-expanded="true">Takeaways</a>
+			</li>
+			<li class="table_booking">
+				<a href="#booking_lists" onclick="getNewBooking();" data-toggle="tab" aria-expanded="false">Table Bookings</a>
+			</li>
+		</ul>
+	</div>
+	<div class="page-content">
+		<div class="tab-content">
+			<div class="tab-pane active" id="order_list">
+				<ul class="media-list order-list pending-orders">
+					<li class="media order-category">
+						<div class="order-cate-title">Incoming Orders</div>
+					</li>
+					<li id="pending-order"></li>
+					<li id="pending-orders"></li>
+					<li class="order-cate-title text-center" id="pending-orders-msg" style="color:#000;"></li>
+				</ul>
+
+				<ul class="media-list order-list">
+					<li class="media order-category">
+						<div class="order-cate-title">Today's Orders</div>
+					</li>
+					<li class="media summary-btn-list">
+						<div class="summary-btns">
+							<a href="#" data-toggle="modal" data-target="#driverSummary">Driver Summary</a>
+							<a href="#" data-toggle="modal" data-target="#orderSummary">Order Summary</a>
+						</div>
+					</li>
+					<li id="today-orders"></li>
+					<div class="order-cate-title" id="new-orders" style="color:black"></div>
+				</ul>
+
+				<div class="order-category allorder-header">
+					<a href="#allorders-orders" class="collapsed" data-toggle="collapse">
+						<span class="order-cate-title">Order History</span>
+					</a>
+				</div>
+				<ul id="allorders-orders" class="media-list order-list all-orders collapse">
+				</ul>
+			</div>
+			<div class="tab-pane" id="booking_lists">
+				<ul class="media-list order-list">
+					<li class="media order-category">
+						<div class="order-cate-title">Pending Tables</div>
+					</li>
+					<li id="newbooking-list">
+					</li>
+					<div class="order-cate-title" id="new-booking-error" style="color:black"></div>
+				</ul>
+				<ul class="media-list order-list">
+					<li class="media order-category">
+						<div class="order-cate-title">Table Order History</div>
+					</li>
+					<li id="table-all">
+					</li>
+					<div class="order-cate-title" id="all-booking-error" style="color:black"></div>
+				</ul>
+			</div>
+		</div>
+		<div style="display: none;" class="loader-wrap" id="loader-wrap">
+			<div class="app-loader">
+				<div class="loader-inner">
+					<div class="loading"></div>
+				</div>
+			</div>
+		</div>
+		<!--Shows The Details and process-->
+		<div id="orderDetails" class="modal fade center-modal" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="loader-wrap modal-load">
+							<div class="app-loader">
+								<div class="loader-inner">
+									<div class="loading"></div>
+								</div>
+							</div>
+						</div>
+						<div id="take_away_details">
+							<input type="hidden" name="order_id" id="order_id" class="order_id">
+							<input type="hidden" name="trans_type" id="trans_type" class="trans_type">
+							<input type="hidden" name="task_id" id="task_id" class="task_id">
+							<input type="hidden" name="assign_driver_label" id="assign_driver_label">
+							<input type="hidden" name="reassigned" id="reassigned" class="">
+							<input type="hidden" name="task_lat" id="task_lat" class="task_lat">
+							<input type="hidden" name="task_lng" id="task_lng" class="task_lng">
+							<input type="hidden" name="task_address" id="task_address" class="task_address">
+							<input type="hidden" name="driver_lat" id="driver_lat" class="driver_lat">
+							<input type="hidden" name="driver_lng" id="driver_lng" class="driver_lng">
+							<input type="hidden" name="driver_name" id="driver_name" class="driver_name">
+							<input type="hidden" name="driver_phone" id="driver_phone" class="driver_phone">
+							<input type="hidden" name="driver_location" id="driver_location" class="driver_location">
+							<div id="order-details-page-title"></div>
+							<div id="order-details">
+							</div>
+							<div id="order-details-item">
+							</div>
+							<div class="actions-1">
+								<div class="order-action">
+									<div class="row">
+										<div class="col-sm-6">
+											<button type="button" class="btn btn-success btn-block" onclick="acceptOrder();">Accept</button>
+										</div>
+										<div class="col-sm-6">
+											<button type="button" class="btn btn-danger btn-block" onclick="declineOrder();">Decline</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="actions-2">
+								<div class="order-action">
+									<div class="row">
+										<div class="col-sm-6">
+											<button type="button" class="btn btn-success btn-block" onclick="changeOrderStatus();">Change Status</button>
+										</div>
+
+										<div class="col-sm-6">
+											<button type="button" class="btn btn-danger btn-block" onclick="printOrder();">Print</button>
+										</div>
+									</div>
+									<div class="row m-t-20">
+										<div class="col-sm-12">
+											<button type="button" class="btn btn-primary btn-block" onclick="showDriverList();">Assign Driver</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="actions-3">
+								<div class="order-action">
+									<div class="row">
+										<div class="col-sm-6">
+											<button type="button" class="btn btn-success btn-block" onclick="changeOrderStatus();">Change Status</button>
+										</div>
+										<div class="col-sm-6">
+											<button type="button" class="btn btn-danger btn-block" onclick="showDriverList();">Assign Driver</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="actions-4">
+								<div class="order-action">
+									<div class="row">
+										<div class="col-sm-6">
+											<button type="button" class="btn btn-success btn-block" onclick="changeOrderStatus();">Change Status</button>
+										</div>
+
+										<div class="col-sm-6">
+											<button type="button" class="btn btn-danger btn-block" onclick="printOrder();">Print</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="actions-5">
+								<div class="order-action">
+									<div class="row">
+										<div class="col-sm-6">
+											<button type="button" class="btn btn-success btn-block" onclick="changeOrderStatus();">Change Status</button>
+										</div>
+
+										<div class="col-sm-6">
+											<button type="button" class="btn btn-danger btn-block" onclick="printOrder();">Print</button>
+										</div>
+									</div>
+									<div class="row m-t-20">
+										<div class="col-sm-12">
+											<button type="button" class="btn btn-info btn-block" onclick="showDriverList();">Change Driver</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="take_away_accept_form" style="display:none">
+							<h3 class="search-title text-center">Accept</h3>
+							<form id="frm-acceptorder" class="frm-acceptorder" method="post" action="#">
+								<input type="hidden" name="order_id" id="order_id" class="order_id">
+								<div class="form-group">
+									<input type="text" class="form-control delivery_time" name="delivery_time" placeholder="Delivery Time" data-validation="required"
+									 data-validation-error-msg="this field is mandatory!">
+								</div>
+								<div class="form-group">
+									<textarea class="form-control" id="remarks" placeholder="Write comments..."></textarea>
+								</div>
+								<div class="form-group">
+									<button class="btn btn-custom forgot-btn btn-circle booking-btn" type="button" onclick="orderConfirm();">Accept & Confirm</button>
+								</div>
+								<div class="text-center delivery-notes"></div>
+							</form>
+						</div>
+						<div id="take_away_decline_form" style="display:none">
+							<h3 class="search-title text-center">Decline</h3>
+							<form id="frm-decline" class="frm-decline" method="post" action="#">
+								<input type="hidden" name="order_id" id="order_id" class="order_id">
+
+								<div class="form-group">
+									<textarea class="form-control" id="remarks" placeholder="Write comments..."></textarea>
+								</div>
+								<div class="form-group">
+									<button class="btn btn-custom forgot-btn btn-circle booking-btn" type="button" onclick="declineConfirm();">Decline Order</button>
+								</div>
+								<div class="text-center delivery-notes"></div>
+							</form>
+						</div>
+						<div id="take_away_change_status" style="display:none">
+							<h3 class="search-title text-center">Change Status</h3>
+							<form id="frm-changestatus" class="frm-changestatus" method="post" action="#">
+								<input type="hidden" name="order_id" id="order_id" class="order_id">
+								<div id="status-list">
+								</div>
+								<div class="form-group">
+									<textarea class="form-control" id="remarks" placeholder="Write comments..."></textarea>
+								</div>
+								<div class="form-group">
+									<button class="btn btn-custom forgot-btn btn-circle booking-btn" type="button" onclick="changeStatus();">Submit</button>
+								</div>
+								<div class="text-center delivery-notes"></div>
+							</form>
+						</div>
+
+						<div id="take_away_assign_driver" style="display:none">
+							<h3 class="search-title text-center">Assign Driver</h3>
+							<div id="driver-list">
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Ends Here-->
+
+
+		<!-- THis is for Booking-View Starts Here-->
+		<div id="BookingDetails" class="modal fade center-modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-body">
+						<div class="loader-wrap" id="modal-load-book">
+							<div class="app-loader">
+								<div class="loader-inner">
+									<div class="loading"></div>
+								</div>
+							</div>
+						</div>
+						<input type="hidden" id="booking_id" />
+						<input type="hidden" id="booking_status" />
+						<div id="booking_details_view">
+							<h4 id="booking-view-title" class="search-title text-center"></h4>
+							<div id="booking-details">
+							</div>
+							<div class="order-action booking-action">
+								<div class="row">
+									<div class="col-sm-6">
+										<button type="button" class="btn btn-success btn-block" onclick="bookingApproved()">Accept</button>
+									</div>
+									<div class="col-sm-6">
+										<button type="button" class="btn btn-danger btn-block" onclick="bookingDenied();">Decline</button>
+									</div>
+								</div>
+							</div>
+							<div class="order-action booking-print">
+								<div class="row">
+									<div class="col-sm-6">
+										<button type="button" class="btn btn-danger btn-block" onclick="printTable();">Print</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="booking_acceptance_form" style="display:none">
+							<h3 class="booking-form-title search-title text-center">Assign Driver</h3>
+							<form class="frm-booking" id="frm-booking" autocomplete="off" action="#" method="POST">
+								<input name="booking_id" id="booking_id" class="booking_id" value="" type="hidden">
+								<input name="status" id="status" class="status" value="" type="hidden">
+								<div class="form-group">
+									<textarea id="bookAtableRemarks" class="form-control"> </textarea>
+								</div>
+								<div class="form-group">
+									<button class="btn btn-custom forgot-btn btn-circle booking-btn" type="button" onclick="bookingChangeStats();"></button>
+								</div>
+								<div class="text-center booking-notes"></div>
+							</form>
+						</div>
+					</div>
+
+
+
+				</div>
+			</div>
+		</div>
+		<!-- Ends Here-->
+		<div id="orderSummary" class="modal fade center-modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-body text-center">
+						<form method="post" class="account-form" action="#">
+							<div class="text-left">
+								<h3 class="search-title text-center">Order Summary
+									<span>
+										<i class="fa fa-calendar text-right "></i>
+									</span>
+								</h3>
+								<input class="form-control datetimepicker m-b-20" id="datetimepicker_summary" type="text">
+								<!-- <div class="input-group input-append date" >
+                <input type="text" class="form-control" name="date" />
+                <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+            </div> -->
+								<p>
+									<b>
+										<span id="summary"></span>
+									</b>
+								</p>
+								<p>
+									<b>Accepted orders : </b>
+									<span id="accpt_cnt"></span>
+								</p>
+								<p>
+									<b>Rejected orders : </b>
+									<span id="decln_cnt"></span>
+								</p>
+								<p>
+									<b>Total : £ </b>
+									<span id="totl_paid"></span>
+								</p>
+								<p>
+									<b>PayPal : </b>
+									<span id="paypal_pymnts"></span>
+								</p>
+								<p>
+									<b>Citypay : </b>
+									<span id="city_pymnts"></span>
+								</p>
+								<p>
+									<b>Cash : </b>
+									<span id="csh_pymnts"></span>
+								</p>
+								<p>
+									<b>Vouchers : </b>
+									<span id="vochr_pymnts"></span>
+								</p>
+							</div>
+							<h5 class="search-title">Accepted Orders</h5>
+							<p class="text-center" id="summaryerror_accptd"></p>
+							<table class="table custom-table" id="accepted_orders_table">
+								<thead>
+									<tr>
+										<th>Time</th>
+										<th>Order</th>
+										<th> </th>
+										<th>Payment</th>
+										<th>Amount</th>
+									</tr>
+								</thead>
+								<tbody id="TodaySummary">
+								</tbody>
+							</table>
+
+							<h5 class="search-title">Rejected Orders</h5>
+							<p class="text-center" id="summaryerror_decline"></p>
+
+							<table class="table custom-table" id="decline_orders_table">
+								<thead>
+									<tr>
+										<th>Time</th>
+										<th>Order ID</th>
+										<!-- <th> </th> -->
+										<th>Payment</th>
+										<th>Amount</th>
+									</tr>
+								</thead>
+								<tbody id="TodaySummaryDeclined">
+								</tbody>
+							</table>
+							<div class="form-group m-b-0">
+								<button class="btn btn-custom forgot-btn btn-circle" type="button" onclick="printSummary();">Print Summary</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--DriverSummary-->
+		<div id="driverSummary" class="modal fade center-modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-body text-center">
+						<form method="post" class="account-form" action="#">
+							<div class="text-left">
+								<h3 class="search-title text-center">Driver Summary
+									<span>
+										<i class="fa fa-calendar text-right "></i>
+									</span>
+								</h3>
+								<input class="form-control datetimepicker m-b-20" id="datetimepicker_driver" type="text">
+								<!-- <div class="input-group input-append date" >
+                <input type="text" class="form-control" name="date" />
+                <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+            </div> -->
+								<p>
+									<b>
+										<span id="summary_driver"></span>
+									</b>
+								</p>
+								<!-- <p><b>Accepted orders : </b><span id="accpt_cnt"></span></p>
+			<p><b>Rejected orders : </b><span id="decln_cnt"></span></p>
+			<p><b>Total : £ </b><span id="totl_paid"></span></p>
+			<p><b>PayPal  : </b><span id="paypal_pymnts"></span></p>
+			<p><b>Citypay  : </b><span id="city_pymnts"></span></p>
+			<p><b>Cash  : </b><span id="csh_pymnts"></span></p>
+			<p><b>Vouchers  : </b><span id="vochr_pymnts"></span></p> -->
+							</div>
+							<h5 class="search-title">Assigned Orders</h5>
+							<p class="text-center" id="summaryerror_driver"></p>
+							<table class="table custom-table" id="accepted_orders_table">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Time</th>
+										<th>Order</th>
+										<th>Parish</th>
+										<th>Payment</th>
+										<th>Amount</th>
+									</tr>
+								</thead>
+								<tbody id="DriverSummary">
+								</tbody>
+							</table>
+							<div class="form-group m-b-0">
+								<button class="btn btn-custom forgot-btn btn-circle" type="button" onclick="printDriverSummary();">Print Summary</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--End-->
+
+
+
+
+		<div id="search" class="modal fade center-modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-body text-center">
+						<form method="post" class="account-form" action="#">
+							<h3 class="search-title">Search Order</h3>
+							<div class="form-group">
+								<input type="text" value="" placeholder="Enter order Number or customer name" class="form-control">
+							</div>
+							<div class="form-group m-b-0">
+								<button class="btn btn-custom forgot-btn btn-circle" type="button">Search</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="print" class="modal fade center-modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-body ">
+						<h3 class="search-title text-center">Printer(s) Setup</h3>
+						<form class="account-form" autocomplete="off" action="#" id="frm_printer" method="POST">
+							<div class="form-group">
+								<label>Front Printer IP Address (192.168.x.x). Required for printing receipts.</label>
+								<input class="form-control" id="primary_ip" placeholder="Primary IP" name="primary_ip" type="text">
+							</div>
+							<div class="form-group">
+								<label>Kitchen Printer IP Address. Leave it blank, if not available</label>
+								<input class="form-control" id="kitchen_ip" placeholder="Kitchen IP" name="kitchen_ip" type="text">
+							</div>
+							<div class="form-group">
+								<button class="btn btn-custom forgot-btn btn-circle" type="button" onclick="savePrinterIPs();">Update IP Address</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="delsettings" class="modal fade center-modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-body text-center">
+						<h3 class="search-title">Delivery Time</h3>
+						<div class="delivery-time">
+							<!-- var theTotal = 0;
+							$('button').click(function(){
+							   theTotal = Number(theTotal) + Number($(this).val());
+							    $('.total').text("Total: "+theTotal);
+							});
+							$('.total').text("Total: "+theTotal); -->
+							<div class="btn-group">
+								<input type="button" class="btn btn-custom" onclick="var qty_el = document.getElementById('delivery_time');var qty = qty_el.value;if( !isNaN( qty ) &amp;&amp; qty &gt; 0 ) qty_el.value=Number(qty_el.value) - Number('10');changedeliveryTime();return false;"
+								 value="-10">
+								<input type="text" class="form-control btn time-result" title="Qty" value="" maxlength="60" id="delivery_time" name="qty"
+								 readonly>
+								<input type="button" class="btn btn-custom" onclick="var qty_el = document.getElementById('delivery_time');var qty = qty_el.value;if( !isNaN( qty )) qty_el.value=Number(qty_el.value) + Number($(this).val());changedeliveryTime();return false;"
+								 value="+10">
+							</div>
+						</div>
+						<div class="pickup-time">
+							<h3 class="search-title">Pickup Time</h3>
+							<div class="delivery-time">
+								<div class="btn-group">
+									<input type="button" class="btn btn-custom" onclick="var qty2_el = document.getElementById('pickup_time'); var qty2 = qty2_el.value; if( !isNaN( qty2 ) &amp;&amp; qty2 &gt; 0 ) qty2_el.value=Number(qty2_el.value) - Number('10');changePickupTime();return false;"
+									 value="-10">
+									<input type="text" class="form-control btn time-result" title="Qty" value="20" maxlength="60" id="pickup_time" name="qty2"
+									 readonly>
+									<input type="button" class="btn btn-custom" onclick="var qty2_el = document.getElementById('pickup_time'); var qty2 = qty2_el.value; if( !isNaN( qty2 )) qty2_el.value=Number(qty2_el.value) + Number($(this).val());changePickupTime();return false;"
+									 value="+10">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="sound"></div>
+		<a href="#" class="settings-btn" data-toggle="modal" data-target="#delsettings">
+			<i class="fa fa-clock-o" aria-hidden="true"></i>
+		</a>
+	</div>
+	<div class="sidebar-overlay" data-reff="#side_menu"></div>
+	<script src="assets/js/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function()
+		{
+			var info =  JSON.parse( getStorage("merchant_info") ); 
+			if(info.service==4)
+			{
+				$('.take_away').css('display','none');
+				// $('.table_booking').addClass('active');
+				$('.table_booking').find('a').trigger('click'); 			     			 
+			}
+		});
+	</script>
+	<script src="assets/js/bootstrap.min.js"></script>
+	<script src="assets/js/config.js?ver=1.0"></script>
+	<script src="assets/js/jquery.form-validator.min.js"></script>
+	<script src="assets/js/moment.min.js"></script>
+	<script src="assets/js/bootstrap-datetimepicker.min.js"></script>
+	<script src="assets/js/sweetalert2.min.js"></script>
+	<script src="assets/js/app.js"></script>
+	<script src="assets/js/printer-wifi.js"></script>
+
+	<script type="text/javascript">
+		function playSound(filename) {
+			document.getElementById("sound").innerHTML = '<audio autoplay="autoplay"><source src="assets/sounds/bell_ring.mp3" type="audio/mpeg" /><source src="assets/sounds/bell_ring.ogg" type="audio/ogg" /><embed hidden="true" autostart="true" loop="false" src="assets/sounds/bell_ring.mp3" /></audio>';
+		}
+	</script>
+</body>
+
+</html>

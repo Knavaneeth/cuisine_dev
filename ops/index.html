@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="manifest" href="manifest.json">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Cuisine</title>
+	<link rel="shortcut icon" href="/assets/images/fav.png" type="image/x-icon">
+	<link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
+	<link href="assets/css/bootstrap.min.css" rel="stylesheet">
+	<link href="assets/css/app.css" rel="stylesheet">
+	<link href="assets/css/sweetalert2.min.css" rel="stylesheet">
+	<script src="assets/js/sweetalert2.min.js"></script>
+	<script src="worker.js"></script>
+	</head>
+<body>
+	<div class="page-content">
+		<div class="login-header">
+			<div class="logo">
+				<img alt="Cuisine" src="assets/images/logo.png" width="250" height="117">
+			</div>
+			<div class="login-title">
+				<h3>Login</h3>
+			</div>
+		</div>
+        <form class="account-form frm-login" id="frm-login" autocomplete="off" method="POST">
+            <div class="form-group">
+                <input class="form-control has_validation" name="username" type="text" placeholder="Username" data-validation="required" data-validation-error-msg="This field is mandatory!" data-trn-key="username"  id="uname">
+            </div>
+            <div class="form-group">
+								<input class="form-control has_validation" type="password" name="password" placeholder="Password" data-validation="required" data-validation-error-msg="This field is mandatory!" data-trn-key="password" id="upass">
+            </div>
+			<div class="form-group">
+                <div class="">
+					<label><input type="checkbox" value="Y" class="m-r-5"> Remember me</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <button  class="btn btn-custom login-btn " type="button" onclick="login();" data-trn-key="login">
+									Login
+								</button>
+            </div>
+            <div class="form-group m-b-0">
+                <div class="text-center">
+                    <a href="" class="forgot-password" data-toggle="modal" data-target="#forgot_password">Forgot password?</a>
+                </div>
+            </div>
+        </form>
+        <div id="forgot_password" class="modal fade center-modal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+						<div id="form_forget_pass">
+						<form method="post" id="frm-forgotpass" class="account-form">
+							<h3>Forgot Password</h3>
+							<p>Enter your email address and a unique verification code will be sent.</p>
+							<div class="form-group">
+								<input type="email" name="email_address" value="" data-validation="required" placeholder="Email Address" class="form-control">
+							</div>
+							<div class="form-group m-b-0">
+								<button class="btn btn-custom forgot-btn btn-circle" onclick="forgotPassword();">Reset Password</button>
+							</div>
+						</form>
+					</div>
+					<div style="display:none" id="forgot_pass_verify">
+						<form method="post" id="frm-changepassword" class="account-form">
+							<input name="email_address" class="email_address" id="email_address" value="" type="hidden">
+							<input name="user_type" class="user_type" id="user_type" value="" type="hidden">
+							<h3>Forgot Password Verification</h3>
+							<div class="form-group">
+								<input type="text" name="code" value="" data-validation="required" placeholder="Verification Code" class="form-control">
+							</div>
+							<div class="form-group">
+								<input type="password" name="newpass" value="" data-validation="required" placeholder="New Password" class="form-control">
+							</div>
+							<div class="form-group m-b-0">
+								<button class="btn btn-custom forgot-btn btn-circle" onclick="changePassWord();">Reset Password</button>
+							</div>
+						</form>
+
+					</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div>
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/config.js?ver=1.0"></script>
+		<script src="assets/js/login.js"></script>
+		<script src="assets/js/jquery.form-validator.min.js"></script>
+	<script src="assets/js/bootstrap.min.js"></script>
+	</body>
+	<script>
+  if ('serviceWorker' in navigator) {
+    //console.log("Will the service worker register?");
+    navigator.serviceWorker.register('worker.js')
+      .then(function(reg){
+       console.log("Yes, it did.");
+      }).catch(function(err) {
+        console.log("No it didn't. This happened: ", err)
+      });
+  }
+</script>
+</html>
